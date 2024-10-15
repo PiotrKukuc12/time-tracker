@@ -15,6 +15,7 @@ import { UserService } from '../user/services/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { ApiConfigService } from '../config';
 import {
+  UserLoginResource,
   UserRegisterResource,
   VerifyUserResource,
 } from '../user/domain/models/resource/user.resource';
@@ -63,7 +64,7 @@ export class AuthenticationService {
     );
   }
 
-  public generateTokenPair({
+  private generateTokenPair({
     user,
   }: GenerateRefreshTokenInput): Observable<AuthTokens> {
     return this.generateAccessToken(user).pipe(
@@ -73,7 +74,10 @@ export class AuthenticationService {
     );
   }
 
-  public validateUser(email: string, password: string): Observable<AuthTokens> {
+  public validateUser({
+    email,
+    password,
+  }: UserLoginResource): Observable<AuthTokens> {
     return from(
       this.userService.findOne({
         type: 'email',

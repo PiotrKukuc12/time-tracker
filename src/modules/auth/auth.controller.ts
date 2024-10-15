@@ -1,6 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthenticationService } from './auth.service';
-import { LoginUserDto, RegisterUserDto, VerifyUserDto } from './dto/auth-user.dto';
+import {
+  LoginUserDto,
+  RegisterUserDto,
+  VerifyUserDto,
+} from './dto/auth-user.dto';
 import { map, Observable } from 'rxjs';
 import { DescribeApi } from '../utils/api/describe-api.decorator';
 import { ApiTags } from '@nestjs/swagger';
@@ -34,14 +38,17 @@ export class AuthController {
   }
 
   @Post('/verify')
-  public verify(
-    @Body() {token, email}:
-  ) {}
+  public verify(@Body() { code, email }: VerifyUserDto): Observable<void> {
+    return this.authService.verifyUserCode({
+      code,
+      email,
+    });
+  }
 
   @Post('/token')
   @DescribeApi({})
-  public getAuthTokens(@Body() { code, email }: VerifyUserDto) {
-    return this.authService.validateUser(email, password);
+  public getAuthTokens(@Body() { email, password }: LoginUserDto) {
+    return this.authService.validateUser({ email, password });
   }
 
   @Post('/logout')

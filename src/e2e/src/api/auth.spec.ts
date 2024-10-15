@@ -67,5 +67,17 @@ describe('User', () => {
 
       expect(status).toBe(200);
     });
+
+    it('should login after verification', async () => {
+      const { body, status } = await request(app.getHttpServer())
+        .post(`/auth/token`)
+        .send(testUser)
+        .set({
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+        });
+
+      expect(status).toBe(200);
+    });
   });
 });
