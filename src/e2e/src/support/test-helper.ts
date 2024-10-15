@@ -3,14 +3,11 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker';
 import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { lastValueFrom } from 'rxjs';
 import { AppModule } from '../../../app.module';
 import { ApiConfigService } from '../../../modules/config';
 import { UserService } from '../../../modules/user/services/user.service';
 import { User } from '../../..//modules/user/domain/user';
 import postgres from 'postgres';
-import { AuthenticationService } from '../../../modules/auth';
-import { AuthTokens } from '../../..//modules/auth/ts/types/auth.type';
 import { INestApplication } from '@nestjs/common';
 import { UserStatus } from 'src/modules/database/schema/user/user.schema';
 
@@ -52,17 +49,6 @@ export class TestHelper {
     await userRepository.create(newUser);
 
     return newUser;
-  }
-  public static async getUserAuthTokens({
-    auth,
-    user,
-  }: {
-    user: User;
-    auth: AuthenticationService;
-  }): Promise<AuthTokens> {
-    const tokens = await lastValueFrom(auth.generateTokenPair({ user }));
-
-    return tokens;
   }
 
   public static async cleanDatabase(): Promise<void> {

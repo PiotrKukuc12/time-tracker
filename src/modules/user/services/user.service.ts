@@ -37,4 +37,11 @@ export class UserService {
 
     return user ? User.toDomain(user) : null;
   }
+
+  public async update(user: User): Promise<void> {
+    await this.drizzle.db
+      .update(dbSchema.users)
+      .set(user.toInsert())
+      .where(eq(dbSchema.users.id, user.id.value));
+  }
 }

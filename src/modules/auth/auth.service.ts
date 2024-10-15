@@ -42,7 +42,7 @@ export class AuthenticationService {
         },
       }),
     ).pipe(
-      map((user) => {
+      switchMap((user) => {
         if (!user) {
           return throwError(() => {
             throw new NotFoundException({
@@ -58,6 +58,11 @@ export class AuthenticationService {
             });
           });
         }
+
+        user.update({
+          status: UserStatus.ACTIVE,
+          verifyToken: null,
+        });
 
         return from(this.userService.update(user));
       }),

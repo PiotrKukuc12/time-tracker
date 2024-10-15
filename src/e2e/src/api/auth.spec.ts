@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { TestHelper } from '../support/test-helper';
 
 import request from 'supertest';
-import { UserRegisterResource } from 'src/modules/user';
+import { UserRegisterResource, VerifyUserResource } from 'src/modules/user';
 import { faker } from '@faker-js/faker/.';
 
 describe('User', () => {
@@ -19,6 +19,7 @@ describe('User', () => {
 
   describe('POST /register', () => {
     let testUser;
+    let code;
     it('should register new user', async () => {
       const password = faker.internet.password();
       const registerBody: UserRegisterResource = {
@@ -42,6 +43,8 @@ describe('User', () => {
 
       expect(status).toBe(201);
       expect(body).toHaveProperty('token');
+
+      code = body.token;
     });
 
     it('should not access login for unverified user', async () => {
@@ -58,14 +61,19 @@ describe('User', () => {
     });
 
     it('should verify user', async () => {
-      const { body, status } = await request(app.getHttpServer())
-        .get(`/auth/verify/${testUser.email}`)
+      const verifyBody: VerifyUserResource = {
+        code,
+        email: testUser.email,
+      };
+      const { status } = await request(app.getHttpServer())
+        .post(`/auth/verify`)
+        .send(verifyBody)
         .set({
           accept: 'application/json',
           'Content-Type': 'application/json',
         });
 
-      expect(status).toBe(200);
+      expect(status).toBe(201);
     });
 
     it('should login after verification', async () => {
@@ -77,7 +85,8 @@ describe('User', () => {
           'Content-Type': 'application/json',
         });
 
-      expect(status).toBe(200);
+      expect(status).toBe(201);
+      expect(body).toHaveProperty('accessToken');
     });
   });
 });

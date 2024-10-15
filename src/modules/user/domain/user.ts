@@ -27,18 +27,34 @@ export type UserProps = {
 
 export class User implements UserProps {
   public readonly id: UserId;
-  public readonly email: Email;
   public readonly password: Password;
-  public readonly status: UserStatus;
-  public readonly verifyToken: string;
+  public email: Email;
+  public status: UserStatus;
+  public verifyToken: string | null;
+  public updatedAt: Date;
   public readonly createdAt: Date;
-  public readonly updatedAt: Date;
 
   constructor(props: UserProps) {
     Object.assign(this, props);
   }
 
-  public update() {}
+  public update(
+    partialProps: Partial<Omit<UserProps, 'id' | 'createdAt' | 'updatedAt'>>,
+  ): void {
+    if (partialProps.email) {
+      this.email = new Email(partialProps.email.value);
+    }
+
+    if (partialProps.status) {
+      this.status = partialProps.status;
+    }
+
+    if (partialProps.verifyToken !== undefined) {
+      this.verifyToken = partialProps.verifyToken;
+    }
+
+    this.updatedAt = DateUtil.now;
+  }
 
   public static async connect({
     email,
