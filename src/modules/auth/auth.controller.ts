@@ -12,6 +12,9 @@ import { DescribeApi } from '../utils/api/describe-api.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthTokens } from './ts/types/auth.type';
 import { AuthenticationGuard } from './guards/authentication.guard';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './guards/roles.guard';
+import { UserRole } from '../database/schema/user/user.schema';
 
 @Controller({
   path: '/auth',
@@ -77,7 +80,8 @@ export class AuthController {
     return { res: 'access' };
   }
 
-  @UseGuards(AuthenticationGuard)
+  @UseGuards(AuthenticationGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   @Get('/test-admin')
   public testAdmin() {
     return 'access';

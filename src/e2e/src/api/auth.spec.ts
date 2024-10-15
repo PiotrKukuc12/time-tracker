@@ -104,7 +104,7 @@ describe('User', () => {
     });
 
     it('shouldnt have access over admin role guard', async () => {
-      const { status, body } = await request(app.getHttpServer())
+      const { status } = await request(app.getHttpServer())
         .get(`/auth/test-admin`)
         .set({
           accept: 'application/json',
@@ -112,7 +112,7 @@ describe('User', () => {
           Authorization: `Bearer ${tokens}`,
         });
 
-      expect(status).toBe(401);
+      expect(status).toBe(403);
     });
   });
 });
