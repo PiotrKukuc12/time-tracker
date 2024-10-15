@@ -2,12 +2,15 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthenticationService } from './auth.service';
 import {
   LoginUserDto,
+  LoginUserDtoResponse,
   RegisterUserDto,
+  RegisterUserDtoResponse,
   VerifyUserDto,
 } from './dto/auth-user.dto';
 import { map, Observable } from 'rxjs';
 import { DescribeApi } from '../utils/api/describe-api.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { AuthTokens } from './ts/types/auth.type';
 
 @Controller({
   path: '/auth',
@@ -23,6 +26,7 @@ export class AuthController {
     },
     response: {
       status: 201,
+      schema: RegisterUserDtoResponse,
     },
   })
   public register(
@@ -38,6 +42,11 @@ export class AuthController {
   }
 
   @Post('/verify')
+  @DescribeApi({
+    operationOptions: {
+      description: 'Verify user code',
+    },
+  })
   public verify(@Body() { code, email }: VerifyUserDto): Observable<void> {
     return this.authService.verifyUserCode({
       code,
@@ -46,11 +55,18 @@ export class AuthController {
   }
 
   @Post('/token')
-  @DescribeApi({})
-  public getAuthTokens(@Body() { email, password }: LoginUserDto) {
+  @DescribeApi({
+    operationOptions: {
+      description: 'Get auth tokens',
+    },
+    response: {
+      schema: LoginUserDtoResponse,
+      status: 200,
+    },
+  })
+  public getAuthTokens(
+    @Body() { email, password }: LoginUserDto,
+  ): Observable<AuthTokens> {
     return this.authService.validateUser({ email, password });
   }
-
-  @Post('/logout')
-  public logot() {}
 }

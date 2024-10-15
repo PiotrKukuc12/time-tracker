@@ -11,7 +11,6 @@ import {
 import { ApiResponse, ResponseOptions } from './api-response.decorator';
 import { ApiQuery, ApiQueryOptions } from './api-query.decorator';
 
-// TODO - Api Param
 interface DescribeApiOptions {
   readonly requiresApiAuth?: boolean;
   readonly response?: ResponseOptions | ResponseOptions[];

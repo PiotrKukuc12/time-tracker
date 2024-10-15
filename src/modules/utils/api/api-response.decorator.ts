@@ -19,8 +19,7 @@ export function ApiResponse(
 
   const normalizedOptions = responseOptions.map((option) => ({
     ...option,
-    schema:
-      option.schema && !option.schema ? toOpenAPI(option.schema) : undefined,
+    schema: option.schema ? toOpenAPI(option.schema) : undefined,
   }));
 
   return applyDecorators(

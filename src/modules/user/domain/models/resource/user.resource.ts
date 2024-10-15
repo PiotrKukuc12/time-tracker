@@ -26,6 +26,14 @@ export const verifyUserSchema = z.object({
   code: z.string().uuid().min(1),
 });
 
+export const registerUserResponseSchema = z.object({
+  token: z.string(),
+});
+
+export const loginUserResponseSchema = z.object({
+  accessToken: z.string().min(1),
+});
+
 export type VerifyUserResource = z.infer<typeof verifyUserSchema>;
 export type UserRegisterResource = z.infer<typeof userRegisterSchema>;
 export type UserLoginResource = z.infer<typeof userLoginSchema>;
