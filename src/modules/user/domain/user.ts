@@ -101,6 +101,7 @@ export class User implements UserProps {
       status: this.status,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      roles: this.roles,
       verifyToken: this.verifyToken,
     };
   }

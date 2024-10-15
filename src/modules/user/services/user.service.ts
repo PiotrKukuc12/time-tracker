@@ -35,7 +35,9 @@ export class UserService {
       where: and(...whereAttributes),
     });
 
-    return user ? User.toDomain(user) : null;
+    const res = user ? User.toDomain(user) : null;
+
+    return res;
   }
 
   public async update(user: User): Promise<void> {

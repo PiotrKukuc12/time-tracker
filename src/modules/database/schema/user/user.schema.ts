@@ -1,6 +1,7 @@
 import { pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import { DateUtil, generateULID } from '../../../utils';
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
+import { jobs } from '../job/job.schema';
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
@@ -40,3 +41,7 @@ export const users = pgTable('users', {
     .notNull()
     .$onUpdate(() => DateUtil.now),
 });
+
+export const userRelations = relations(users, ({ many }) => ({
+  jobs: many(jobs),
+}));

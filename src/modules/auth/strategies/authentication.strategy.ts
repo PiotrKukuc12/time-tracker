@@ -7,7 +7,10 @@ import { ACCESS_TOKEN_STRATEGY_NAME } from '../constants';
 import { ApiConfigService } from 'src/modules/config';
 import { AccessTokenPayload } from '../ts/types/auth.type';
 import { UserService } from 'src/modules/user/services/user.service';
-import { User } from 'src/modules/user/domain/user';
+import { getJwtFromHeaders } from '../helpers/jwt';
+import { AuthenticatedRequest } from '../guards/roles.guard';
+import { FastifyRequest } from 'fastify';
+import { AuthenticatedUser } from '../models/authenticated-user';
 
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(
@@ -22,21 +25,27 @@ export class AccessTokenStrategy extends PassportStrategy(
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: env.get('JWT_SECRET'),
+      passReqToCallback: true,
+      algorithms: ['HS256'],
     });
   }
 
-  async validate(payload: AccessTokenPayload): Promise<User> {
-    const user = await this.userService.findOne({
-      type: 'id',
-      value: payload.sub,
-    });
+  public validate(
+    req: FastifyRequest,
+    payload: AccessTokenPayload,
+  ): AuthenticatedUser {
+    const accessToken = getJwtFromHeaders(req.headers || {});
 
-    if (!user) {
+    if (!accessToken) {
       throw new UnauthorizedException({
         message: 'User not found',
       });
     }
 
-    return user;
+    return new AuthenticatedUser({
+      accessToken,
+      sub: payload.sub,
+      roles: payload.roles,
+    });
   }
 }

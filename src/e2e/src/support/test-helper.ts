@@ -10,10 +10,12 @@ import { User } from '../../..//modules/user/domain/user';
 import postgres from 'postgres';
 import { INestApplication } from '@nestjs/common';
 import { UserStatus } from 'src/modules/database/schema/user/user.schema';
+import { DrizzleService } from 'src/modules/database';
 
 export class TestHelper {
   public static async prepareFixture(): Promise<{
     application: INestApplication;
+    drizzleService: DrizzleService;
   }> {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -22,6 +24,7 @@ export class TestHelper {
     const application = moduleFixture.createNestApplication();
 
     const configService = application.get(ApiConfigService);
+    const drizzleService = application.get(DrizzleService);
 
     const databaseUrl = configService.get('CONNECTION_URL');
 
@@ -33,6 +36,7 @@ export class TestHelper {
 
     return {
       application,
+      drizzleService,
     };
   }
 

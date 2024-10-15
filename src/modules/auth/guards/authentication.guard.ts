@@ -3,7 +3,6 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 import { AuthGuard } from '@nestjs/passport';
 
 import { FastifyRequest } from 'fastify';
@@ -12,11 +11,11 @@ import { Observable } from 'rxjs';
 import { ACCESS_TOKEN_STRATEGY_NAME } from '../constants';
 import { getJwtFromHeaders } from '../helpers/jwt';
 import { shouldSkipAuth } from '../helpers/skip-auth';
-import { Reflector } from '@nestjs/core';
+import {} from '@nestjs/core';
 
 @Injectable()
 export class AuthenticationGuard extends AuthGuard(ACCESS_TOKEN_STRATEGY_NAME) {
-  constructor(private reflector: Reflector) {
+  constructor() {
     super();
   }
 
@@ -30,7 +29,7 @@ export class AuthenticationGuard extends AuthGuard(ACCESS_TOKEN_STRATEGY_NAME) {
     if (shouldSkipAuth(context)) {
       if (accessToken) {
         try {
-          this.checkUser(request);
+          this.checkUser(context);
         } catch (error) {
           console.log(error);
           throw new UnauthorizedException('Invalid token');
@@ -45,7 +44,7 @@ export class AuthenticationGuard extends AuthGuard(ACCESS_TOKEN_STRATEGY_NAME) {
     }
 
     try {
-      this.checkUser(request);
+      this.checkUser(context);
     } catch (error) {
       console.log(error);
       throw new UnauthorizedException('Invalid token');
@@ -55,8 +54,8 @@ export class AuthenticationGuard extends AuthGuard(ACCESS_TOKEN_STRATEGY_NAME) {
   }
 
   private checkUser(
-    request: FastifyRequest,
+    context: ExecutionContext,
   ): Promise<boolean> | Observable<boolean> | boolean {
-    return super.canActivate(new ExecutionContextHost([request]));
+    return super.canActivate(context);
   }
 }

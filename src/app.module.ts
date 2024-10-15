@@ -7,8 +7,9 @@ import { ApiConfigService } from './modules/config/api-config.service';
 import { DatabaseOptions } from './modules/database/database-options';
 import { AuthModule } from './modules/auth/index';
 import { UserModule } from './modules/user/user.module';
+import { JobModule } from './modules/job/job.module';
 
-const APP_MODULES = [UserModule];
+const APP_MODULES = [UserModule, JobModule];
 
 @Module({
   imports: [

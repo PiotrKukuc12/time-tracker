@@ -104,17 +104,19 @@ export class AuthenticationService {
           });
         }
 
-        const isMatch = user.password.compare(password);
+        return from(user.password.compare(password)).pipe(
+          switchMap((isMatch) => {
+            if (isMatch === false) {
+              return throwError(() => {
+                throw new BadRequestException({
+                  message: 'Invalid credentials',
+                });
+              });
+            }
 
-        if (!isMatch) {
-          return throwError(() => {
-            throw new BadRequestException({
-              message: 'Invalid credentials',
-            });
-          });
-        }
-
-        return this.generateTokenPair({ user });
+            return this.generateTokenPair({ user });
+          }),
+        );
       }),
     );
   }

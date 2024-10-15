@@ -6,8 +6,8 @@ export class Password extends ValueObject<string> {
     super(value);
   }
 
-  public compare(password: string): boolean {
-    return bcrypt.compareSync(password, this.value);
+  public compare(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.value);
   }
 
   public static async generateHashFrom(value: string): Promise<Password> {

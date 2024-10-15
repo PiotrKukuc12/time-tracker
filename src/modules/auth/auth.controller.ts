@@ -15,6 +15,8 @@ import { AuthenticationGuard } from './guards/authentication.guard';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
 import { UserRole } from '../database/schema/user/user.schema';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { AuthenticatedUser } from './models/authenticated-user';
 
 @Controller({
   path: '/auth',
@@ -76,14 +78,14 @@ export class AuthController {
 
   @UseGuards(AuthenticationGuard)
   @Get('/test-user')
-  public testUser() {
-    return { res: 'access' };
+  public testUser(@CurrentUser() user: AuthenticatedUser) {
+    return user;
   }
 
   @UseGuards(AuthenticationGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @Get('/test-admin')
-  public testAdmin() {
-    return 'access';
+  public testAdmin(@CurrentUser() user: AuthenticatedUser) {
+    return user;
   }
 }
