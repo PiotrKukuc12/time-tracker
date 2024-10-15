@@ -1,4 +1,4 @@
-import { UserStatus } from '../../database/schema/user/user.schema';
+import { UserRole, UserStatus } from '../../database/schema/user/user.schema';
 import { dbSchema } from '../../database';
 import { Password } from './value-objects/string/password.vo';
 import { UserId } from './value-objects/ids/user-id.vo';
@@ -21,6 +21,7 @@ export type UserProps = {
   password: Password;
   status: UserStatus;
   verifyToken: string | null;
+  roles: UserRole[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -33,6 +34,7 @@ export class User implements UserProps {
   public verifyToken: string | null;
   public updatedAt: Date;
   public readonly createdAt: Date;
+  public roles: UserRole[];
 
   constructor(props: UserProps) {
     Object.assign(this, props);
@@ -53,6 +55,10 @@ export class User implements UserProps {
       this.verifyToken = partialProps.verifyToken;
     }
 
+    if (partialProps.roles) {
+      this.roles = partialProps.roles;
+    }
+
     this.updatedAt = DateUtil.now;
   }
 
@@ -68,6 +74,7 @@ export class User implements UserProps {
       password: await Password.generateHashFrom(password),
       verifyToken,
       status,
+      roles: [UserRole.USER],
       createdAt: DateUtil.now,
       updatedAt: DateUtil.now,
     });
@@ -80,6 +87,7 @@ export class User implements UserProps {
       email: new Email(input.email),
       password: new Password(input.password),
       status: input.status,
+      roles: input.roles,
       createdAt: input.createdAt,
       updatedAt: input.updatedAt,
     });

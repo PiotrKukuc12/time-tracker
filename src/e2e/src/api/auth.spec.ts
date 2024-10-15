@@ -17,9 +17,10 @@ describe('User', () => {
     await TestHelper.cleanDatabase();
   });
 
-  describe('POST /register', () => {
+  describe('auth', () => {
     let testUser;
     let code;
+    let tokens;
     it('should register new user', async () => {
       const password = faker.internet.password();
       const registerBody: UserRegisterResource = {
@@ -87,6 +88,31 @@ describe('User', () => {
 
       expect(status).toBe(201);
       expect(body).toHaveProperty('accessToken');
+      tokens = body.accessToken;
+    });
+    it('should have access over guard', async () => {
+      const { status, body } = await request(app.getHttpServer())
+        .get(`/auth/test-user`)
+        .set({
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${tokens}`,
+        });
+
+      expect(status).toBe(200);
+      expect(body.res).toBe('access');
+    });
+
+    it('shouldnt have access over admin role guard', async () => {
+      const { status, body } = await request(app.getHttpServer())
+        .get(`/auth/test-admin`)
+        .set({
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${tokens}`,
+        });
+
+      expect(status).toBe(401);
     });
   });
 });

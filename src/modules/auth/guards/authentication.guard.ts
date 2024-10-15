@@ -12,9 +12,14 @@ import { Observable } from 'rxjs';
 import { ACCESS_TOKEN_STRATEGY_NAME } from '../constants';
 import { getJwtFromHeaders } from '../helpers/jwt';
 import { shouldSkipAuth } from '../helpers/skip-auth';
+import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class AuthenticationGuard extends AuthGuard(ACCESS_TOKEN_STRATEGY_NAME) {
+  constructor(private reflector: Reflector) {
+    super();
+  }
+
   public override async canActivate(
     context: ExecutionContext,
   ): Promise<boolean> {

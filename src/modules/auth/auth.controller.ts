@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthenticationService } from './auth.service';
 import {
   LoginUserDto,
@@ -11,6 +11,7 @@ import { map, Observable } from 'rxjs';
 import { DescribeApi } from '../utils/api/describe-api.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthTokens } from './ts/types/auth.type';
+import { AuthenticationGuard } from './guards/authentication.guard';
 
 @Controller({
   path: '/auth',
@@ -68,5 +69,17 @@ export class AuthController {
     @Body() { email, password }: LoginUserDto,
   ): Observable<AuthTokens> {
     return this.authService.validateUser({ email, password });
+  }
+
+  @UseGuards(AuthenticationGuard)
+  @Get('/test-user')
+  public testUser() {
+    return { res: 'access' };
+  }
+
+  @UseGuards(AuthenticationGuard)
+  @Get('/test-admin')
+  public testAdmin() {
+    return 'access';
   }
 }

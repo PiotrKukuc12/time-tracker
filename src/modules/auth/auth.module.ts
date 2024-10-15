@@ -6,6 +6,7 @@ import { UserModule } from '../user/user.module';
 import { UserService } from '../user/services/user.service';
 import { AuthController } from './auth.controller';
 import { ACCESS_TOKEN_STRATEGY_NAME } from './constants';
+import { AccessTokenStrategy } from './strategies/authentication.strategy';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { ACCESS_TOKEN_STRATEGY_NAME } from './constants';
     }),
     UserModule,
   ],
-  providers: [AuthenticationService, UserService],
+  providers: [AuthenticationService, UserService, AccessTokenStrategy],
   controllers: [AuthController],
   exports: [AuthenticationService],
 })

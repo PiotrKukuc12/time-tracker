@@ -1,9 +1,15 @@
 import { pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import { DateUtil, generateULID } from '../../../utils';
+import { sql } from 'drizzle-orm';
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
+}
+
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
 }
 
 export const userStatusEnum = pgEnum('user_status', [
@@ -18,6 +24,11 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   password: text('password').notNull(),
   status: userStatusEnum('status').notNull().default(UserStatus.ACTIVE),
+  roles: text('roles')
+    .array()
+    .$type<UserRole[]>()
+    .notNull()
+    .default(sql`ARRAY[]::text[]`),
   verifyToken: text('verify_token'),
   createdAt: timestamp('created_at', {
     withTimezone: true,

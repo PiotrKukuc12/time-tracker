@@ -163,6 +163,7 @@ export class AuthenticationService {
   private generateAccessToken(user: User): Observable<string> {
     const payload: AccessTokenPayload = {
       sub: user.id.value,
+      roles: user.roles,
     };
     return from(
       this.jwtService.signAsync(payload, {
